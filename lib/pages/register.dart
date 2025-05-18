@@ -1,25 +1,26 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_app/components/my_btn.dart';
 import 'package:flutter_app/components/my_textfield.dart';
 import 'package:flutter_app/components/square_tile.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
-class LoginPage extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   final Function()? onTap;
-  const LoginPage({super.key, required this.onTap});
+  const RegisterPage({super.key, required this.onTap});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  // text editing controllers
+class _RegisterPageState extends State<RegisterPage> {
+  // text editing controller
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
-  // -- Sign User In Method --
-  void signUserIn() async {
+  // --- Sign User Up Method ---
+  void signUserUp() async {
     // show loading circle
     showDialog(context: context, builder: (context){
       return const Center(
@@ -27,11 +28,17 @@ class _LoginPageState extends State<LoginPage> {
       );
     });
 
-    // Sign in
+    // Sign up
     try{
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      if (passwordController.text != confirmPasswordController.text) {
+        Navigator.pop(context);
+        showErrorMsg("Password does not match");
+        return; // Exit function early
+      }
+      // If passwords match, try registration
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
-        password: passwordController.text.trim(),
+        password: passwordController.text,
       );
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
@@ -47,17 +54,17 @@ class _LoginPageState extends State<LoginPage> {
         return  AlertDialog(
           backgroundColor: Colors.red,
           title: Center(
-              child: Text(
-                message,
-                style: const TextStyle(color: Colors.white),
-              ),
+            child: Text(
+              message,
+              style: const TextStyle(color: Colors.white),
+            ),
           ),
         );
       },
     );
   }
 
-  // -- Sign In w/ Google --
+  // --- Sign In w/ Google ---
   Future<UserCredential> signInWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -92,18 +99,10 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 50),
               Text(
-                'Welcome back',
+                'Welcome! let\'s create an account! ',
                 style: TextStyle(
                   color: Colors.grey[700],
                   fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Sign in to continue',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24,
                 ),
               ),
               const SizedBox(height: 25),
@@ -123,13 +122,19 @@ class _LoginPageState extends State<LoginPage> {
                 obscureText: true,
               ),
               const SizedBox(height: 10),
-              Text('Forgot Password?'),
+
+              // --- Confirm Password Field ---
+              MyTextfield(
+                controller: confirmPasswordController,
+                hintText: 'Confirm password',
+                obscureText: true,
+              ),
               const SizedBox(height: 25),
 
-              // --- Sign in Btn ---
+              // --- Sign Up Btn ---
               MyBtn(
-                onTap: signUserIn,
-                text: 'Sign In',
+                onTap: signUserUp,
+                text: 'Sign Up',
               ),
               const SizedBox(height: 50),
 
@@ -168,23 +173,23 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 50),
 
-              // --- Register Account ---
+              // --- Sign In to Account ---
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Not a member?',
+                    'Already a member?',
                     style: TextStyle(
                       color: Colors.grey[700],
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
-              ),),
+                    ),),
                   const SizedBox(width: 5),
                   // use widget because your accessing a parent properties
                   GestureDetector(
                     onTap: widget.onTap,
                     child: Text(
-                      'Register now!',
+                      'Sign in!',
                       style: TextStyle(
                         color: Colors.blue,
                         fontWeight: FontWeight.bold,
@@ -196,8 +201,8 @@ class _LoginPageState extends State<LoginPage> {
               )
             ],
           ),
-        ),
-      )
+        )
+      ),
     );
   }
 }

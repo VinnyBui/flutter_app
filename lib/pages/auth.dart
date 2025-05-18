@@ -2,9 +2,23 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/pages/login.dart';
 import 'package:flutter_app/pages/home.dart';
+import 'package:flutter_app/pages/register.dart';
 
-class AuthPage extends StatelessWidget {
+class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
+
+  @override
+  State<AuthPage> createState() => _AuthPageState();
+}
+
+class _AuthPageState extends State<AuthPage> {
+  bool showLoginPage = true;
+
+  void togglePages(){
+    setState(() {
+      showLoginPage = !showLoginPage;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +31,7 @@ class AuthPage extends StatelessWidget {
               return HomePage();
             }
             else{
-              return LoginPage();
+              return showLoginPage ? LoginPage(onTap: togglePages) : RegisterPage(onTap: togglePages);
             }
         }
       )
