@@ -1,17 +1,70 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/components/my_btn.dart';
 import 'package:flutter_app/components/my_textfield.dart';
 import 'package:flutter_app/components/square_tile.dart';
 
-class LoginPage extends StatelessWidget {
-  LoginPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
-  // text edititing controller
-  final usernameController = TextEditingController();
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  // text editing controller
+  final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
   // sign user in method
-  void signUserIn() {}
+  void signUserIn() async {
+    // show loading circle
+    showDialog(context: context, builder: (context){
+      return const Center(
+        child: CircularProgressIndicator(),
+        );
+      },
+    );
+
+    // sign in
+    try{
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+      Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
+      debugPrint('FULL AUTH ERROR: ${e.code} - ${e.message}');
+      if (e.code == 'invalid-credential') {
+        wrongCredentialMessage();
+      }else if (e.code == 'invalid-email') {
+        wrongEmailMessage();
+      }
+    }
+  }
+
+  void wrongCredentialMessage(){
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const AlertDialog(
+          title: Text("Wrong email/password"),
+        );
+      },
+    );
+  }
+
+  void wrongEmailMessage(){
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const AlertDialog(
+          title: Text("Please enter an email"),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +101,7 @@ class LoginPage extends StatelessWidget {
 
               // --- Email Field ---
               MyTextfield(
-                controller: usernameController,
+                controller: emailController,
                 hintText: 'Email',
                 obscureText: false,
               ),
@@ -65,7 +118,7 @@ class LoginPage extends StatelessWidget {
               const SizedBox(height: 25),
 
               // --- Sign in Btn ---
-              myBtn(
+              MyBtn(
                 onTap: signUserIn,
               ),
               const SizedBox(height: 50),

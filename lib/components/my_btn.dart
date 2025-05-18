@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class myBtn extends StatelessWidget {
+class MyBtn extends StatelessWidget {
 
   final Function()? onTap;
 
-  const myBtn({
+  const MyBtn({
     super.key,
     required this.onTap,
   });
