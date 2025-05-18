@@ -17,7 +17,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Bucket list Demo',
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.light(
+          primary: Color(0xFF6366F1),
+          secondary: Color(0xFF8B5CF6),
+        ),
+      ),
       home: AuthPage(),
     );
   }
