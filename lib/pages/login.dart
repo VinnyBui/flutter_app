@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/components/my_btn.dart';
 import 'package:flutter_app/components/my_textfield.dart';
 import 'package:flutter_app/components/square_tile.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -29,8 +30,8 @@ class _LoginPageState extends State<LoginPage> {
     // sign in
     try{
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
       );
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
@@ -64,6 +65,24 @@ class _LoginPageState extends State<LoginPage> {
         );
       },
     );
+  }
+
+  // sign in w/ google
+  Future<UserCredential> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
   @override
@@ -152,7 +171,10 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 50),
 
               // --- Alternative Sign In ---
-              SquareTile(imagePath: 'lib/images/google.png'),
+              SquareTile(
+                imagePath: 'lib/images/google.png',
+                onTap: signInWithGoogle,
+              ),
               const SizedBox(height: 50),
 
               // --- Register Account ---
