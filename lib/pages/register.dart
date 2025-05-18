@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_app/pages/login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_app/components/my_btn.dart';
 import 'package:flutter_app/components/my_textfield.dart';
 import 'package:flutter_app/components/square_tile.dart';
 
 class RegisterPage extends StatefulWidget {
-  final Function()? onTap;
-  const RegisterPage({super.key, required this.onTap});
+  const RegisterPage({super.key});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -186,16 +186,21 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),),
                   const SizedBox(width: 5),
                   // use widget because your accessing a parent properties
-                  GestureDetector(
-                    onTap: widget.onTap,
+                  TextButton(
                     child: Text(
-                      'Sign in!',
+                      'Sign In!',
                       style: TextStyle(
                         color: Colors.blue,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
                     ),
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                      );
+                    },
                   )
                 ],
               )

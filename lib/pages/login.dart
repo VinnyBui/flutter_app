@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/components/my_btn.dart';
 import 'package:flutter_app/components/my_textfield.dart';
 import 'package:flutter_app/components/square_tile.dart';
+import 'package:flutter_app/pages/register.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginPage extends StatefulWidget {
-  final Function()? onTap;
-  const LoginPage({super.key, required this.onTap});
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -181,8 +181,7 @@ class _LoginPageState extends State<LoginPage> {
               ),),
                   const SizedBox(width: 5),
                   // use widget because your accessing a parent properties
-                  GestureDetector(
-                    onTap: widget.onTap,
+                  TextButton(
                     child: Text(
                       'Register now!',
                       style: TextStyle(
@@ -191,6 +190,12 @@ class _LoginPageState extends State<LoginPage> {
                         fontSize: 16,
                       ),
                     ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => RegisterPage()),
+                      );
+                    },
                   )
                 ],
               )
