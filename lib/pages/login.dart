@@ -35,33 +35,23 @@ class _LoginPageState extends State<LoginPage> {
       );
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
-      debugPrint('FULL AUTH ERROR: ${e.code} - ${e.message}');
-      if (e.code == 'invalid-credential') {
-        wrongCredentialMessage();
-      }else if (e.code == 'invalid-email') {
-        wrongEmailMessage();
-      }
+        Navigator.pop(context);
+        showErrorMsg(e.code);
     }
   }
 
-  void wrongCredentialMessage(){
+  void showErrorMsg(String message){
     showDialog(
       context: context,
       builder: (context) {
-        return const AlertDialog(
-          title: Text("Wrong email/password"),
-        );
-      },
-    );
-  }
-
-  void wrongEmailMessage(){
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const AlertDialog(
-          title: Text("Please enter an email"),
+        return  AlertDialog(
+          backgroundColor: Colors.red,
+          title: Center(
+              child: Text(
+                message,
+                style: const TextStyle(color: Colors.white),
+              ),
+          ),
         );
       },
     );
