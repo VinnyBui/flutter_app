@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_app/pages/login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_app/components/my_btn.dart';
 import 'package:flutter_app/components/my_textfield.dart';
@@ -223,10 +222,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => LoginPage()),
-                        );
+                        Navigator.pop(context);
                       },
                     )
                   ],
