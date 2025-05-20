@@ -17,9 +17,12 @@ class _LoginPageState extends State<LoginPage> {
   // text editing controllers
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   // -- Sign User In Method --
   void signUserIn() async {
+    if (!_formKey.currentState!.validate()) return;
+
     // show loading circle
     showDialog(context: context, builder: (context){
       return const Center(
@@ -33,9 +36,9 @@ class _LoginPageState extends State<LoginPage> {
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
-      Navigator.pop(context);
+      if (mounted) Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
+      if (mounted) Navigator.pop(context);
       showErrorMsg(e.code);
     }
   }
@@ -81,125 +84,144 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: Colors.grey[300],
       body: SafeArea(
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // --- Logo / Header ---
-              const SizedBox(height: 50),
-              const Icon(
-                Icons.lock,
-                size: 100,
-              ),
-              const SizedBox(height: 50),
-              Text(
-                'Welcome back',
-                style: TextStyle(
-                  color: Colors.grey[700],
-                  fontSize: 16,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // --- Logo / Header ---
+                const SizedBox(height: 50),
+                const Icon(
+                  Icons.lock,
+                  size: 100,
                 ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Sign in to continue',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24,
+                const SizedBox(height: 50),
+                Text(
+                  'Welcome back',
+                  style: TextStyle(
+                    color: Colors.grey[700],
+                    fontSize: 16,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 25),
+                const SizedBox(height: 10),
+                Text(
+                  'Sign in to continue',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                  ),
+                ),
+                const SizedBox(height: 25),
 
-              // --- Email Field ---
-              MyTextfield(
-                controller: emailController,
-                hintText: 'Email',
-                obscureText: false,
-              ),
-              const SizedBox(height: 10),
+                // --- Email Field ---
+                MyTextfield(
+                  controller: emailController,
+                  hintText: 'Email',
+                  obscureText: false,
+                  validator: (value){
+                    if(value == null || value.isEmpty){
+                      return 'Please enter an Email';
+                    }
+                    return null;
+                  }
+                ),
+                const SizedBox(height: 10),
 
-              // --- Password Field ---
-              MyTextfield(
-                controller: passwordController,
-                hintText: 'Password',
-                obscureText: true,
-              ),
-              const SizedBox(height: 10),
-              Text('Forgot Password?'),
-              const SizedBox(height: 25),
+                // --- Password Field ---
+                MyTextfield(
+                  controller: passwordController,
+                  hintText: 'Password',
+                  obscureText: true,
+                  validator: (value){
+                    if(value == null || value.isEmpty){
+                      return 'Please enter a password';
+                    }
+                    return null;
+                  }
+                ),
+                const SizedBox(height: 10),
+                Text('Forgot Password?'),
+                const SizedBox(height: 25),
 
-              // --- Sign in Btn ---
-              MyBtn(
-                onTap: signUserIn,
-                text: 'Sign In',
-              ),
-              const SizedBox(height: 50),
+                // --- Sign in Btn ---
+                MyBtn(
+                  onTap: () {
+                    if (_formKey.currentState!.validate()) {  // This triggers validation
+                      signUserIn();
+                    }
+                  },
+                  text: 'Sign In',
+                ),
+                const SizedBox(height: 50),
 
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: Row(
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Colors.grey[400],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                        child: Text(
+                          'Or continue with',
+                          style: TextStyle(color: Colors.grey[700]),
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Colors.grey[400],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 50),
+
+                // --- Alternative Sign In ---
+                SquareTile(
+                  imagePath: 'lib/images/google.png',
+                  onTap: signInWithGoogle,
+                ),
+                const SizedBox(height: 50),
+
+                // --- Register Account ---
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(
-                      child: Divider(
-                        thickness: 1,
-                        color: Colors.grey[400],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                      child: Text(
-                        'Or continue with',
-                        style: TextStyle(color: Colors.grey[700]),
-                      ),
-                    ),
-                    Expanded(
-                      child: Divider(
-                        thickness: 1,
-                        color: Colors.grey[400],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 50),
-
-              // --- Alternative Sign In ---
-              SquareTile(
-                imagePath: 'lib/images/google.png',
-                onTap: signInWithGoogle,
-              ),
-              const SizedBox(height: 50),
-
-              // --- Register Account ---
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Not a member?',
-                    style: TextStyle(
-                      color: Colors.grey[700],
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-              ),),
-                  const SizedBox(width: 5),
-                  // use widget because your accessing a parent properties
-                  TextButton(
-                    child: Text(
-                      'Register now!',
+                    Text(
+                      'Not a member?',
                       style: TextStyle(
-                        color: Colors.blue,
+                        color: Colors.grey[700],
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
+                ),),
+                    const SizedBox(width: 5),
+                    // use widget because your accessing a parent properties
+                    TextButton(
+                      child: Text(
+                        'Register now!',
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => RegisterPage()),
-                      );
-                    },
-                  )
-                ],
-              )
-            ],
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => RegisterPage()),
+                        );
+                      },
+                    )
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       )

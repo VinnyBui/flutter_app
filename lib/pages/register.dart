@@ -18,9 +18,12 @@ class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   // --- Sign User Up Method ---
   void signUserUp() async {
+    if (!_formKey.currentState!.validate()) return;
+
     // show loading circle
     showDialog(context: context, builder: (context){
       return const Center(
@@ -40,9 +43,9 @@ class _RegisterPageState extends State<RegisterPage> {
         email: emailController.text.trim(),
         password: passwordController.text,
       );
-      Navigator.pop(context);
+      if (mounted) Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
-      Navigator.pop(context);
+      if (mounted) Navigator.pop(context);
       showErrorMsg(e.code);
     }
   }
@@ -88,123 +91,148 @@ class _RegisterPageState extends State<RegisterPage> {
       backgroundColor: Colors.grey[300],
       body: SafeArea(
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // --- Logo / Header ---
-              const SizedBox(height: 50),
-              const Icon(
-                Icons.lock,
-                size: 100,
-              ),
-              const SizedBox(height: 50),
-              Text(
-                'Welcome! let\'s create an account! ',
-                style: TextStyle(
-                  color: Colors.grey[700],
-                  fontSize: 16,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // --- Logo / Header ---
+                const SizedBox(height: 50),
+                const Icon(
+                  Icons.lock,
+                  size: 100,
                 ),
-              ),
-              const SizedBox(height: 25),
+                const SizedBox(height: 50),
+                Text(
+                  'Welcome! let\'s create an account! ',
+                  style: TextStyle(
+                    color: Colors.grey[700],
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 25),
 
-              // --- Email Field ---
-              MyTextfield(
-                controller: emailController,
-                hintText: 'Email',
-                obscureText: false,
-              ),
-              const SizedBox(height: 10),
+                // --- Email Field ---
+                MyTextfield(
+                  controller: emailController,
+                  hintText: 'Email',
+                  obscureText: false,
+                  validator: (value){
+                    if(value == null || value.isEmpty){
+                      return 'Please enter an Email';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 10),
 
-              // --- Password Field ---
-              MyTextfield(
-                controller: passwordController,
-                hintText: 'Password',
-                obscureText: true,
-              ),
-              const SizedBox(height: 10),
+                // --- Password Field ---
+                MyTextfield(
+                  controller: passwordController,
+                  hintText: 'Password',
+                  obscureText: true,
+                  validator: (value){
+                    if(value == null || value.isEmpty){
+                      return 'Please enter a Password';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 10),
 
-              // --- Confirm Password Field ---
-              MyTextfield(
-                controller: confirmPasswordController,
-                hintText: 'Confirm password',
-                obscureText: true,
-              ),
-              const SizedBox(height: 25),
+                // --- Confirm Password Field ---
+                MyTextfield(
+                  controller: confirmPasswordController,
+                  hintText: 'Confirm password',
+                  obscureText: true,
+                  validator: (value){
+                    if(value == null || value.isEmpty){
+                      return 'Please enter the a Password';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 25),
 
-              // --- Sign Up Btn ---
-              MyBtn(
-                onTap: signUserUp,
-                text: 'Sign Up',
-              ),
-              const SizedBox(height: 50),
+                // --- Sign Up Btn ---
+                MyBtn(
+                  onTap: () {
+                    if (_formKey.currentState!.validate()) {  // This triggers validation
+                      signUserUp();
+                    }
+                  },
+                  text: 'Sign Up',
+                ),
+                const SizedBox(height: 50),
 
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: Row(
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Colors.grey[400],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                        child: Text(
+                          'Or continue with',
+                          style: TextStyle(color: Colors.grey[700]),
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          thickness: 1,
+                          color: Colors.grey[400],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 50),
+
+                // --- Alternative Sign In ---
+                SquareTile(
+                  imagePath: 'lib/images/google.png',
+                  onTap: signInWithGoogle,
+                ),
+                const SizedBox(height: 50),
+
+                // --- Sign In to Account ---
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(
-                      child: Divider(
-                        thickness: 1,
-                        color: Colors.grey[400],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                      child: Text(
-                        'Or continue with',
-                        style: TextStyle(color: Colors.grey[700]),
-                      ),
-                    ),
-                    Expanded(
-                      child: Divider(
-                        thickness: 1,
-                        color: Colors.grey[400],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 50),
-
-              // --- Alternative Sign In ---
-              SquareTile(
-                imagePath: 'lib/images/google.png',
-                onTap: signInWithGoogle,
-              ),
-              const SizedBox(height: 50),
-
-              // --- Sign In to Account ---
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Already a member?',
-                    style: TextStyle(
-                      color: Colors.grey[700],
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),),
-                  const SizedBox(width: 5),
-                  // use widget because your accessing a parent properties
-                  TextButton(
-                    child: Text(
-                      'Sign In!',
+                    Text(
+                      'Already a member?',
                       style: TextStyle(
-                        color: Colors.blue,
+                        color: Colors.grey[700],
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
+                      ),),
+                    const SizedBox(width: 5),
+                    // use widget because your accessing a parent properties
+                    TextButton(
+                      child: Text(
+                        'Sign In!',
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
-                    ),
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
-                      );
-                    },
-                  )
-                ],
-              )
-            ],
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginPage()),
+                        );
+                      },
+                    )
+                  ],
+                )
+              ],
+            ),
           ),
         )
       ),

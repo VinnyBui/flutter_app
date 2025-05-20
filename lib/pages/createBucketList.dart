@@ -68,12 +68,22 @@ class _CreateBucketListState extends State<CreateBucketList> {
                 controller: titleController,
                 hintText: 'Name Your Bucket List',
                 obscureText: false,
+                validator: (value){
+                  if(value == null || value.isEmpty){
+                    return 'Please enter a title';
+                  }
+                  return null;
+                }
               ),
 
               // --- Submit Button ---
               const SizedBox(height: 25),
               MyBtn(
-                onTap: createBucketList,
+                onTap: () {
+                  if (_formKey.currentState!.validate()) {  // This triggers validation
+                    createBucketList();
+                  }
+                },
                 text: 'Create Bucket List',
               ),
             ],
