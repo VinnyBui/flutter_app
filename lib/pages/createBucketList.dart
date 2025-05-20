@@ -26,6 +26,9 @@ class _CreateBucketListState extends State<CreateBucketList> {
         'isShared': false,
         'members': [user?.uid],
       });
+      titleController.clear();
+      // return to home screen
+      if (mounted) Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       showErrorMsg(e.code);
     }
