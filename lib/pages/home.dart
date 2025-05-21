@@ -58,19 +58,18 @@ class HomePage extends StatelessWidget {
                   height: 100,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    gradient: LinearGradient(
-                      colors: [Colors.blue.shade100, Colors.purple.shade100],
-                    ),
+                    color: Colors.black87,
                   ),
                   child: Center(
                     child: ListTile(
                       contentPadding: EdgeInsets.all(16),
-                      leading: FaIcon(FontAwesomeIcons.bucket, size: 24, color: Colors.deepPurple),
+                      leading: FaIcon(FontAwesomeIcons.bucket, size: 24, color: Colors.white70),
                       title: Text(
                         data['title'],
                         style: TextStyle(
                           fontSize: 18, // Larger text
                           fontWeight: FontWeight.w600,
+                          color: Colors.white,
                         ),
                       ),
                     ),
@@ -90,7 +89,7 @@ class HomePage extends StatelessWidget {
             MaterialPageRoute(builder: (context) => CreateBucketList()),
           );
         },
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.black87,
         shape: const CircleBorder(),
         child: const Icon(
           Icons.add,
