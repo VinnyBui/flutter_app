@@ -1,11 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/pages/createBucketList.dart';
+import 'package:flutter_app/services/firestore_service.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'auth.dart';
 
 class HomePage extends StatelessWidget {
-  final user = FirebaseAuth.instance.currentUser;
+  final user = FirebaseAuth.instance.currentUser!;
+  final FirestoreService _firestoreService = FirestoreService();
+
   HomePage({super.key});
 
   // --- Sign Out ---
@@ -33,13 +38,51 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          children: [
-            Text('Logged in ${user?.email}'),
-          ],
-        ),
+
+      // --- Display Bucket Lists ---
+      // Listen to stream and rebuild UI when data changes
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _firestoreService.getUserBucketLists(user.uid),
+        builder: (context, snapshot) {
+          // Create scrollable list that only renders visible items
+          return ListView.builder(
+            itemCount: snapshot.data?.docs.length ?? 0,
+            itemBuilder: (context, index) {
+              final doc = snapshot.data!.docs[index];
+              // Turns document from Objects to key, value pairs (temp)
+              final data = doc.data() as Map<String, dynamic>;
+              return Card(
+                elevation: 4,
+                margin: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                child: Container(
+                  height: 100,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    gradient: LinearGradient(
+                      colors: [Colors.blue.shade100, Colors.purple.shade100],
+                    ),
+                  ),
+                  child: Center(
+                    child: ListTile(
+                      contentPadding: EdgeInsets.all(16),
+                      leading: FaIcon(FontAwesomeIcons.bucket, size: 24, color: Colors.deepPurple),
+                      title: Text(
+                        data['title'],
+                        style: TextStyle(
+                          fontSize: 18, // Larger text
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
       ),
+
+      // --- Add Bucket List Btn ---
       floatingActionButton: FloatingActionButton(
         onPressed: (){
           Navigator.push(
