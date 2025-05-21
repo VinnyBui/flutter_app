@@ -6,4 +6,12 @@ class FirestoreService {
   Stream<QuerySnapshot> getUserBucketLists(String userId){
     return _firestore.collection('bucketlists').where('createdBy', isEqualTo: userId).snapshots();
   }
+
+  Stream<DocumentSnapshot> getBucketList(String bucketListId){
+    return _firestore.collection('bucketlists').doc(bucketListId).snapshots();
+  }
+
+  Stream<QuerySnapshot> getBucketListItems(String bucketListId){
+    return _firestore.collection('bucketlist_items').where('bucketListId', isEqualTo: bucketListId).snapshots();
+  }
 }

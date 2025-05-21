@@ -6,6 +6,7 @@ import 'package:flutter_app/services/firestore_service.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'auth.dart';
+import 'bucketListDetails.dart';
 
 class HomePage extends StatelessWidget {
   final user = FirebaseAuth.instance.currentUser!;
@@ -54,22 +55,29 @@ class HomePage extends StatelessWidget {
               return Card(
                 elevation: 4,
                 margin: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                child: Container(
-                  height: 100,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: Colors.black87,
-                  ),
-                  child: Center(
-                    child: ListTile(
-                      contentPadding: EdgeInsets.all(16),
-                      leading: FaIcon(FontAwesomeIcons.bucket, size: 24, color: Colors.white70),
-                      title: Text(
-                        data['title'],
-                        style: TextStyle(
-                          fontSize: 18, // Larger text
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                // Handles card being clicked
+                child: InkWell(
+                  onDoubleTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => BucketListDetails(bucketListId: doc.id)));
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    height: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.black87,
+                    ),
+                    child: Center(
+                      child: ListTile(
+                        contentPadding: EdgeInsets.all(16),
+                        leading: FaIcon(FontAwesomeIcons.bucket, size: 24, color: Colors.white70),
+                        title: Text(
+                          data['title'],
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
