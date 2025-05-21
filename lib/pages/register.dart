@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_app/components/my_btn.dart';
 import 'package:flutter_app/components/my_textfield.dart';
@@ -97,9 +98,8 @@ class _RegisterPageState extends State<RegisterPage> {
               children: [
                 // --- Logo / Header ---
                 const SizedBox(height: 50),
-                const Icon(
-                  Icons.lock,
-                  size: 100,
+                const FaIcon(
+                  FontAwesomeIcons.bucket, size: 120, color: Colors.black87
                 ),
                 const SizedBox(height: 50),
                 Text(
