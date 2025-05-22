@@ -54,26 +54,39 @@ class _BucketListDetailsState extends State<BucketListDetails> {
               final doc = snapshot.data!.docs[index];
               // Turns document from Objects to key, value pairs (temp)
               final data = doc.data() as Map<String, dynamic>;
+              return Dismissible(
+                key: Key(doc.id),
+                direction: DismissDirection.endToStart,
+                onDismissed: (direction) {
 
-              return Card(
-                elevation: 4,
-                margin: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                // Handles card being clicked
-                child: Container(
-                  height: 100,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: Colors.black87,
-                  ),
-                  child: Center(
-                    child: ListTile(
-                      contentPadding: EdgeInsets.all(16),
-                      title: Text(
-                        data['title'],
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("${data['title']} deleted"),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+                background: Container(color: Colors.red),
+                child: Card(
+                  elevation: 4,
+                  margin: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                  // Handles card being clicked
+                  child: Container(
+                    height: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.black87,
+                    ),
+                    child: Center(
+                      child: ListTile(
+                        contentPadding: EdgeInsets.all(16),
+                        title: Text(
+                          data['title'],
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),

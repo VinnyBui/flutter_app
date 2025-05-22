@@ -52,31 +52,45 @@ class HomePage extends StatelessWidget {
               final doc = snapshot.data!.docs[index];
               // Turns document from Objects to key, value pairs (temp)
               final data = doc.data() as Map<String, dynamic>;
-              return Card(
-                elevation: 4,
-                margin: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                // Handles card being clicked
-                child: InkWell(
-                  onDoubleTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => BucketListDetails(bucketListId: doc.id)));
-                  },
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    height: 100,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.black87,
+              return Dismissible(
+                key: Key(doc.id),
+                direction: DismissDirection.endToStart,
+                onDismissed: (direction) {
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("${data['title']} deleted"),
+                      duration: Duration(seconds: 2),
                     ),
-                    child: Center(
-                      child: ListTile(
-                        contentPadding: EdgeInsets.all(16),
-                        leading: FaIcon(FontAwesomeIcons.bucket, size: 24, color: Colors.white70),
-                        title: Text(
-                          data['title'],
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                  );
+                },
+                background: Container(color: Colors.red),
+                child: Card(
+                  elevation: 4,
+                  margin: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                  // Handles card being clicked
+                  child: InkWell(
+                    onDoubleTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => BucketListDetails(bucketListId: doc.id)));
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      height: 100,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.black87,
+                      ),
+                      child: Center(
+                        child: ListTile(
+                          contentPadding: EdgeInsets.all(16),
+                          leading: FaIcon(FontAwesomeIcons.bucket, size: 24, color: Colors.white70),
+                          title: Text(
+                            data['title'],
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
