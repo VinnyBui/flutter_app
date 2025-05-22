@@ -55,8 +55,8 @@ class HomePage extends StatelessWidget {
               return Dismissible(
                 key: Key(doc.id),
                 direction: DismissDirection.endToStart,
-                onDismissed: (direction) {
-
+                onDismissed: (direction) async {
+                  await _firestoreService.deleteBucketList(doc.id);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text("${data['title']} deleted"),

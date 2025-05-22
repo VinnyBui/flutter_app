@@ -57,8 +57,8 @@ class _BucketListDetailsState extends State<BucketListDetails> {
               return Dismissible(
                 key: Key(doc.id),
                 direction: DismissDirection.endToStart,
-                onDismissed: (direction) {
-
+                onDismissed: (direction) async {
+                  await _firestoreService.deleteBucketListItem(doc.id);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text("${data['title']} deleted"),
